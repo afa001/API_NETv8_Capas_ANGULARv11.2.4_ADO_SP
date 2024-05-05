@@ -1,3 +1,5 @@
 .net 8
 Node: 14.16.0
 Angular: 11.2.4
+
+requirements - install nodemodules
