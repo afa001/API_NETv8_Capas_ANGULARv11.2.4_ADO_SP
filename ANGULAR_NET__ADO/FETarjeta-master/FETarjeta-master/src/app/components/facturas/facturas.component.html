@@ -1,0 +1,230 @@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="titulo">FACTURAS</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="titulo">NUEVA FACTURA</h4>
+                    <form [formGroup]="form" (ngSubmit)="guardarFactura()">
+                        <div class="input-group input-group-lg mb-3">
+                            <button type="button" class="btn btn-primary btn-lg" (click)="nuevo()">
+                                <i class="fas fa-plus"></i>&nbsp; Nuevo
+                            </button>
+                        </div>                        
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-calendar-alt"
+                                    [class.green-icon]="this.form.get('fechaEmisionFactura')?.valid"
+                                    [class.red-icon]="this.form.get('fechaEmisionFactura')?.invalid && this.form.get('fechaEmisionFactura')?.touched"></i>
+                            </span>
+                            <input formControlName="fechaEmisionFactura" type="date" class="form-control" placeholder="Fecha Emision Factura">
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"
+                                    [class.green-icon]="this.form.get('idCliente')?.valid"
+                                    [class.red-icon]="this.form.get('idCliente')?.invalid && this.form.get('id')?.touched"></i>
+                            </span>
+                            <select formControlName="idCliente" class="form-control">
+                                <option value="" disabled selected>Seleccione Cliente</option>
+                                <option *ngFor="let cliente of listClientes" [value]="cliente.Id">{{cliente.RazonSocial}}</option>
+                            </select>                            
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-file-invoice"
+                                    [class.green-icon]="this.form.get('numeroFactura')?.valid"
+                                    [class.red-icon]="this.form.get('numeroFactura')?.invalid && this.form.get('numeroFactura')?.touched"></i>
+                            </span>
+                            <input formControlName="numeroFactura" type="number" class="form-control" placeholder="Numero Factura">
+                        </div>
+                        <h6 class="titulo">DETALLE</h6>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-file-invoice"
+                                    [class.green-icon]="this.form.get('idFactura')?.valid"
+                                    [class.red-icon]="this.form.get('idFactura')?.invalid && this.form.get('idFactura')?.touched"></i>
+                            </span>
+                            <input formControlName="idFactura" type="number" class="form-control" placeholder="ID Factura">
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-box"
+                                    [class.green-icon]="this.form.get('idProducto')?.valid"
+                                    [class.red-icon]="this.form.get('idProducto')?.invalid && this.form.get('idProducto')?.touched"></i>
+                            </span>
+                            <select formControlName="idProducto" class="form-control" [(ngModel)]="selectedProducto" (ngModelChange)="onProductoSelected($event)">
+                                <option value="" disabled selected>Seleccione Producto</option>
+                                <option *ngFor="let producto of listProductos" [value]="producto.Id">{{producto.NombreProducto}}</option>
+                            </select>                            
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-sort-numeric-up"
+                                    [class.green-icon]="this.form.get('cantidadDeProducto')?.valid"
+                                    [class.red-icon]="this.form.get('cantidadDeProducto')?.invalid && this.form.get('cantidadDeProducto')?.touched"></i>
+                            </span>
+                            <input formControlName="cantidadDeProducto" type="number" class="form-control" placeholder="Cantidad de Producto">
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"
+                                    [class.green-icon]="this.form.get('precioUnitarioProducto')?.valid"
+                                    [class.red-icon]="this.form.get('precioUnitarioProducto')?.invalid && this.form.get('precioUnitarioProducto')?.touched"></i>
+                            </span>
+                            <input formControlName="precioUnitarioProducto" type="number" step="0.01" class="form-control" placeholder="Precio Unitario del Producto" readonly>
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"
+                                    [class.green-icon]="this.form.get('subtotalProducto')?.valid"
+                                    [class.red-icon]="this.form.get('subtotalProducto')?.invalid && this.form.get('subtotalProducto')?.touched"></i>
+                            </span>
+                            <input formControlName="subtotalProducto" type="number" step="0.01" class="form-control" placeholder="Subtotal del Producto" readonly>
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-sticky-note"
+                                    [class.green-icon]="this.form.get('notas')?.valid"
+                                    [class.red-icon]="this.form.get('notas')?.invalid && this.form.get('notas')?.touched"></i>
+                            </span>
+                            <input formControlName="notas" type="text" class="form-control" placeholder="Notas">
+                        </div>
+                        
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-list-ol"
+                                    [class.green-icon]="this.form.get('numeroTotalArticulos')?.valid"
+                                    [class.red-icon]="this.form.get('numeroTotalArticulos')?.invalid && this.form.get('numeroTotalArticulos')?.touched"></i>
+                            </span>
+                            <input formControlName="numeroTotalArticulos" type="number" class="form-control" placeholder="Numero Total Articulos">
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"
+                                    [class.green-icon]="this.form.get('subTotalFacturas')?.valid"
+                                    [class.red-icon]="this.form.get('subTotalFacturas')?.invalid && this.form.get('subTotalFacturas')?.touched"></i>
+                            </span>
+                            <input formControlName="subTotalFacturas" type="number" step="0.01" class="form-control" placeholder="Sub Total Facturas" readonly>
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"
+                                    [class.green-icon]="this.form.get('totalImpuestos')?.valid"
+                                    [class.red-icon]="this.form.get('totalImpuestos')?.invalid && this.form.get('totalImpuestos')?.touched"></i>
+                            </span>
+                            <input formControlName="totalImpuestos" type="number" step="0.01" class="form-control" placeholder="Total Impuestos" readonly>
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"
+                                    [class.green-icon]="this.form.get('totalFactura')?.valid"
+                                    [class.red-icon]="this.form.get('totalFactura')?.invalid && this.form.get('totalFactura')?.touched"></i>
+                            </span>
+                            <input formControlName="totalFactura" type="number" step="0.01" class="form-control" placeholder="Total Factura" readonly>
+                        </div>
+                     
+                        <div class="d-grid gap-2">
+                            <button [disabled]="this.form.invalid" type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i>&nbsp; Guardar producto</button>
+                        </div>                                                
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="titulo">LISTADO DE FACTURAS</h4>
+                    <div class="table-responsive">
+                        <form [formGroup]="formSearch" (ngSubmit)="buscar()">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="searchOption" value="cliente" id="searchOption1">
+                                <label class="form-check-label" for="searchOption1">
+                                  Cliente
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="searchOption" value="factura" id="searchOption2">
+                                <label class="form-check-label" for="searchOption2">
+                                  Factura
+                                </label>
+                              </div>                            
+                            <fieldset>
+                              <legend>Cliente</legend>
+                              <div class="input-group input-group-lg mb-3">
+                                <span class="input-group-text">
+                                  <i class="fas fa-user"
+                                    [class.green-icon]="this.form.get('idClienteSearch')?.valid"
+                                    [class.red-icon]="this.form.get('idClienteSearch')?.invalid && this.form.get('idClienteSearch')?.touched"
+                                    aria-label="Icono de usuario"></i>
+                                </span>
+                                <select id="idClienteSearch" formControlName="idClienteSearch" class="form-control" [disabled]="formSearch.get('searchOption')?.value === 'factura'">
+                                  <option value="" selected>Seleccione Cliente</option>
+                                  <option *ngFor="let cliente of listClientes" [value]="cliente.Id">{{cliente.RazonSocial}}</option>
+                                </select>
+                              </div>
+                            </fieldset>
+                            <fieldset>
+                              <legend>Factura</legend>
+                              <div class="input-group input-group-lg mb-3">
+                                <span class="input-group-text">
+                                  <i class="fas fa-file-invoice"
+                                    [class.green-icon]="this.form.get('numeroFacturaSearch')?.valid"
+                                    [class.red-icon]="this.form.get('numeroFacturaSearch')?.invalid && this.form.get('numeroFacturaSearch')?.touched"
+                                    aria-label="Icono de factura"></i>
+                                </span>
+                                <input id="numeroFacturaSearch" formControlName="numeroFacturaSearch" type="number" class="form-control" placeholder="Numero Factura" [disabled]="formSearch.get('searchOption')?.value === 'cliente'">
+                              </div>
+                            </fieldset>
+                            <div class="d-grid gap-2">
+                              <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-search"></i>&nbsp; Buscar</button>
+                            </div>
+                          </form>                        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Número de Factura</th>
+                                    <th>Fecha de Emisión</th>
+                                    <th>ID Cliente</th>
+                                    <th>Número Total de Artículos</th>
+                                    <th>Subtotal de Facturas</th>
+                                    <th>Total de Impuestos</th>
+                                    <th>Total de Factura</th>
+                                    <!-- <th>Editar</th> -->
+                                    <!-- <th>Eliminar</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let factura of listFacturas">
+                                    <td>{{ factura.NumeroFactura }}</td>
+                                    <td>{{ factura.FechaEmisionFactura }}</td>
+                                    <td>{{ factura.IdCliente }}</td>
+                                    <td>{{ factura.NumeroTotalArticulos }}</td>
+                                    <td>{{ factura.SubTotalFacturas }}</td>
+                                    <td>{{ factura.TotalImpuestos }}</td>
+                                    <td>{{ factura.TotalFactura }}</td>
+                                    <!-- <td>
+                                        <i (click)="editarFactura(factura)" class="far fa-edit text-info"></i>
+                                    </td> -->
+                                    <!-- <td>
+                                        <i (click)="eliminarFactura(factura.id)" class="far fa-trash-alt text-danger"></i>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>   
+                    </div>                                     
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
