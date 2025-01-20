@@ -99,6 +99,7 @@ ALTER TABLE [dbo].[TblDetallesFactura] CHECK CONSTRAINT [FK_TblDetallesFactura_C
 GO
 ALTER TABLE [dbo].[TblDetallesFactura]  WITH CHECK ADD  CONSTRAINT [FK_TblDetallesFactura_TblFacturas] FOREIGN KEY([IdFactura])
 REFERENCES [dbo].[TblFacturas] ([Id])
+ON DELETE CASCADE;
 GO
 ALTER TABLE [dbo].[TblDetallesFactura] CHECK CONSTRAINT [FK_TblDetallesFactura_TblFacturas]
 GO

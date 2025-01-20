@@ -187,9 +187,10 @@ export class FacturasComponent implements OnInit {
 
   eliminarFactura(id: number) {
     this._facturaService.deleteFactura(id).subscribe(data => {
-      this.toastr.error('La factura fue eliminada con exito!','Factura eliminada');
+      this.toastr.success('La factura fue eliminada con exito!','Factura eliminada');
       this.obtenerFacturas();
     }, error => {
+      this.toastr.error('No se pudo eliminar la factura!','Error');
       console.log(error);
     })
 
