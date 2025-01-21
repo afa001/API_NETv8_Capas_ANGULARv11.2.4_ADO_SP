@@ -44,7 +44,7 @@ export class FacturasComponent implements OnInit {
       subTotalFacturas: ['', [Validators.required, Validators.min(0.01)]],
       totalImpuestos: ['', [Validators.required, Validators.min(0.01)]],
       totalFactura: ['', [Validators.required, Validators.min(0.01)]],
-      idFactura: ['', Validators.required],
+      //idFactura: ['', Validators.required],
       idProducto: ['', Validators.required],
       // idProducto: [{value: '', disabled: true}, Validators.required],
       cantidadDeProducto: ['', [Validators.required, Validators.min(1)]],
@@ -159,29 +159,30 @@ export class FacturasComponent implements OnInit {
         })
     }else {
         //EDIT  
-        // factura.id = this.id;
-        // this._facturaService.updateFactura(this.id, factura).subscribe(data => {
-        //   const detalleFactura: any = {
-        //     IdFactura: this.id,  // Usamos el id existente para el detalle de la factura
-        //     IdProducto: this.form.get('IdProducto')?.value,
-        //     CantidadDeProducto: this.form.get('CantidadDeProducto')?.value,
-        //     PrecioUnitarioProducto: this.form.get('PrecioUnitarioProducto')?.value,
-        //     SubtotalProducto: this.form.get('SubtotalProducto')?.value,
-        //     Notas: this.form.get('Notas')?.value,
-        //   }
-        //   // Asumiendo que tienes un método para actualizar el detalle de la factura
-        //   this._detalleFacturaService.updateDetalleFactura(this.id, detalleFactura).subscribe(data => {
-        //     this.toastr.info('La factura y su detalle fueron actualizados con éxito!', 'Factura Actualizada');
-        //     this.obtenerFacturas();
-        //     this.form.reset();
-        //     this.accion = 'Agregar';
-        //     this.id = undefined;
-        //   }, error => {
-        //     console.log(error);
-        //   })
-        // }, error => {
-        //   console.log(error);
-        // })
+        factura.Id = this.id;
+        this._facturaService.updateFactura(this.id, factura).subscribe(data => {
+          
+          const detalleFactura: any = {
+            IdFactura: this.id,  // Usamos el id existente para el detalle de la factura
+            IdProducto: this.form.get('IdProducto')?.value,
+            CantidadDeProducto: this.form.get('CantidadDeProducto')?.value,
+            PrecioUnitarioProducto: this.form.get('PrecioUnitarioProducto')?.value,
+            SubtotalProducto: this.form.get('SubtotalProducto')?.value,
+            Notas: this.form.get('Notas')?.value,
+          }
+          // Asumiendo que tienes un método para actualizar el detalle de la factura
+          this._detalleFacturaService.updateDetalleFactura(factura.Id, detalleFactura).subscribe(data => {
+            this.toastr.info('La factura y su detalle fueron actualizados con éxito!', 'Factura Actualizada');
+            this.obtenerFacturas();
+            this.form.reset();
+            this.accion = 'Agregar';
+            this.id = undefined;
+          }, error => {
+            console.log(error);
+          })
+        }, error => {
+          console.log(error);
+        })
     }
   }
 
@@ -196,17 +197,25 @@ export class FacturasComponent implements OnInit {
 
   }
 
-  // editarFactura(factura: Factura) {
-  //   this.accion = 'Editar';
-  //   this.id = factura.id;
-
-  //   this.form.patchValue({
-  //     titular: factura.titular,
-  //     numeroFactura: factura.numeroFactura,
-  //     fechaExpiracion: factura.fechaExpiracion,
-  //     cvv: factura.cvv
-  //   })
-  // }
+  editarFactura(factura: Factura) {
+    this.accion = 'Editar'; 
+    this.id = factura.Id; // Asignamos el ID de la factura seleccionada. para el momento del dar clic en Guardar producto se aplique la bandera del update
+  
+    // Rellenamos el formulario con los valores de la factura seleccionada.
+    this.form.patchValue({
+      fechaEmisionFactura: factura.FechaEmisionFactura,
+      idCliente: factura.IdCliente,
+      numeroFactura: factura.NumeroFactura,
+      numeroTotalArticulos: factura.NumeroTotalArticulos,
+      subTotalFacturas: factura.SubTotalFacturas,
+      totalImpuestos: factura.TotalImpuestos,
+      totalFactura: factura.TotalFactura
+    });
+  
+    // Lógica adicional si se necesita realizar algún procesamiento.
+    console.log(`Editando la factura con ID: ${factura.Id}`);
+  }
+  
 
   nuevo() {
     this.form.reset({
