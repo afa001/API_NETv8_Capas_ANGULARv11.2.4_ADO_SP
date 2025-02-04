@@ -1,33 +1,58 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DetallesFacturaService {
-  private myAppUrl = 'https://localhost:7126/';
-  private myApiUrl = 'api/DetallesFactura/'
+  private readonly BASE_URL = 'https://localhost:7126/';
+  private readonly API_URL = `${this.BASE_URL}api/DetallesFactura/`;
 
   constructor(private http: HttpClient) { }
 
-  getListDetallesFactura(): Observable<any> {
-    return this.http.get(this.myAppUrl + this.myApiUrl);
+  private getHeaders(token: string): HttpHeaders {
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
-  getDetalleFacturaById(id: number): Observable<any> {
-    return this.http.get(this.myAppUrl + this.myApiUrl + id);
-  }  
-
-  deleteDetalleFactura(id: number): Observable<any> {
-    return this.http.delete(this.myAppUrl + this.myApiUrl + id)
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error);
+    return throwError('Something went wrong; please try again later.');
   }
 
-  saveDetalleFactura(detalleFactura: any): Observable<any> {
-    return this.http.post(this.myAppUrl + this.myApiUrl, detalleFactura);
+  getListDetallesFactura(token: string): Observable<any> {
+    const headers = this.getHeaders(token);
+    return this.http.get(this.API_URL, { headers }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  updateDetalleFactura(id: number, detalleFactura: any): Observable<any> {
-    return this.http.put(this.myAppUrl + this.myApiUrl + id, detalleFactura);
+  getDetalleFacturaById(token: string, id: number): Observable<any> {
+    const headers = this.getHeaders(token);
+    return this.http.get(`${this.API_URL}${id}`, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteDetalleFactura(token: string, id: number): Observable<any> {
+    const headers = this.getHeaders(token);
+    return this.http.delete(`${this.API_URL}${id}`, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  saveDetalleFactura(token: string, detalleFactura: any): Observable<any> {
+    const headers = this.getHeaders(token);
+    return this.http.post(this.API_URL, detalleFactura, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateDetalleFactura(token: string, id: number, detalleFactura: any): Observable<any> {
+    const headers = this.getHeaders(token);
+    return this.http.put(`${this.API_URL}${id}`, detalleFactura, { headers }).pipe(
+      catchError(this.handleError)
+    );
   }
 }

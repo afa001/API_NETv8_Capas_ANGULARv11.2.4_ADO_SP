@@ -10,27 +10,27 @@ export class FacturasService {
 
   constructor(private facturaRepository: FacturaRepository) { }
 
-  getListFacturas(): Observable<Factura[]> {
-    return this.facturaRepository.getListFacturas();
+  getListFacturas(token:string): Observable<Factura[]> {
+    return this.facturaRepository.getListFacturas(token);
   }
 
-  deleteFactura(id: number): Observable<any> {
-    return this.facturaRepository.deleteFactura(id);
+  deleteFactura(token:string, id: number): Observable<any> {
+    return this.facturaRepository.deleteFactura(token, id);
   }
 
-  saveFactura(factura: Factura): Observable<any> {
-    return this.facturaRepository.saveFactura(factura);
+  saveFactura(token:string, factura: Factura): Observable<any> {
+    return this.facturaRepository.saveFactura(token, factura);
   }
 
-  updateFactura(id: number, factura: Factura): Observable<any> {
-    return this.facturaRepository.updateFactura(id, factura);
+  updateFactura(token:string, id: number, factura: Factura): Observable<any> {
+    return this.facturaRepository.updateFactura(token, id, factura);
   }
 
-  buscarByCliente(clienteId: number): Observable<Factura[]> {
-    return this.facturaRepository.buscarByCliente(clienteId);
+  buscarByCliente(token:string, clienteId: number): Observable<Factura[]> {
+    return this.facturaRepository.buscarByCliente(token, clienteId);
   }
 
-  buscarByFactura(numeroFactura: number): Observable<Factura[]> {
-    return this.facturaRepository.buscarByFactura(numeroFactura);
+  buscarByFactura(token:string, numeroFactura: number): Observable<Factura[]> {
+    return this.facturaRepository.buscarByFactura(token, numeroFactura);
   }
 }
