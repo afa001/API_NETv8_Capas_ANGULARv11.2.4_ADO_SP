@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FacturasController : ControllerBase
 {
     private readonly ITblFacturasService _tblFacturasService;
@@ -73,13 +75,20 @@ public class FacturasController : ControllerBase
         }
 
         _tblFacturasService.UpdateFactura(factura);
-        return NoContent();
+        return Ok(new { message = "Factura actualizada." });
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteFactura(int id)
     {
+        var factura = _tblFacturasService.GetFacturaById(id);
+        if (factura == null)
+        {
+            return NotFound(new { message = "Factura no encontrada." }); 
+        }
+
         _tblFacturasService.DeleteFactura(id);
-        return NoContent();
+        return Ok(new { message = "Factura eliminada correctamente." }); 
     }
+
 }

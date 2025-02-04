@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProductosController : ControllerBase
 {
     private readonly ICatProductosRepository _catProductosRepository;

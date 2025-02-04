@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class DetallesFacturaController : ControllerBase
 {
     private readonly ITblDetallesFacturaService _tblDetallesFacturaService;
@@ -45,7 +47,7 @@ public class DetallesFacturaController : ControllerBase
         }
 
         _tblDetallesFacturaService.UpdateDetalleFactura(detalleFactura);
-        return NoContent();
+        return Ok(new { message = "Detalle de factura actualizado." });
     }
 
     [HttpDelete("{id}")]
