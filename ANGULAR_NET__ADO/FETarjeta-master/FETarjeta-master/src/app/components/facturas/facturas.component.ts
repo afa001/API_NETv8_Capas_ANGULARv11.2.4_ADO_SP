@@ -35,7 +35,7 @@ export class FacturasComponent implements OnInit {
     private _detalleFacturaService: DetallesFacturaService,
     private _productoService: ProductosService,
     private _tokenService: TokenService,
-    private formBuilder: FormBuilder    
+    private formBuilder: FormBuilder
     ) {
     this.form = this.fb.group({
       fechaEmisionFactura: ['', Validators.required],
@@ -76,33 +76,51 @@ export class FacturasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarDatosDeInicio();
+    this.calculaValoresProducto();
+  }
 
+  calculaValoresProducto() {
+    const cantidadDeProductoControl = this.form.get('cantidadDeProducto');
+    const idProductoControl = this.form.get('idProducto');
+  
+    if (cantidadDeProductoControl && idProductoControl) {
+      cantidadDeProductoControl.valueChanges.subscribe(() => {
+        this.updateImpuestosYTotales();
+      });
+  
+      idProductoControl.valueChanges.subscribe(() => {
+        this.updateImpuestosYTotales();
+      });
+    }
+  }  
+
+  updateImpuestosYTotales() {
     const cantidadDeProductoControl = this.form.get('cantidadDeProducto');
     const precioUnitarioProductoControl = this.form.get('precioUnitarioProducto');
     const subtotalProductoControl = this.form.get('subtotalProducto');
     const subTotalFacturasControl = this.form.get('subTotalFacturas');
     const totalImpuestosControl = this.form.get('totalImpuestos');
     const totalFacturaControl = this.form.get('totalFactura');
-
-    if (cantidadDeProductoControl && precioUnitarioProductoControl && subtotalProductoControl && subTotalFacturasControl && totalImpuestosControl && totalFacturaControl) {
-      cantidadDeProductoControl.valueChanges.subscribe(cantidad => {
-          const selectedProducto = this.listProductos.find(producto => producto.Id === +this.selectedProducto);
-        
-          if (selectedProducto) {
-            const subtotalProducto = cantidad * selectedProducto.PrecioUnitario;
-            subtotalProductoControl.setValue(subtotalProducto);
-        
-            const subTotalFacturas = this.calculateSubTotalFacturas(cantidad, selectedProducto.PrecioUnitario);
-            subTotalFacturasControl.setValue(subTotalFacturas);
-        
-            const totalImpuestos = subTotalFacturas * 0.19;
-            totalImpuestosControl.setValue(totalImpuestos);
-        
-            const totalFactura = subTotalFacturas + totalImpuestos;
-            totalFacturaControl.setValue(totalFactura);
-          }
-      });
-    }    
+    const idProductoControl = this.form.get('idProducto');
+  
+    if (cantidadDeProductoControl && precioUnitarioProductoControl && subtotalProductoControl && subTotalFacturasControl && totalImpuestosControl && totalFacturaControl && idProductoControl) {
+      const cantidad = cantidadDeProductoControl.value;
+      const selectedProducto = this.listProductos.find(producto => producto.Id === +this.selectedProducto);
+  
+      if (selectedProducto) {
+        const subtotalProducto = cantidad * selectedProducto.PrecioUnitario;
+        subtotalProductoControl.setValue(subtotalProducto);
+  
+        const subTotalFacturas = this.calculateSubTotalFacturas(cantidad, selectedProducto.PrecioUnitario);
+        subTotalFacturasControl.setValue(subTotalFacturas);
+  
+        const totalImpuestos = subTotalFacturas * 0.19;
+        totalImpuestosControl.setValue(totalImpuestos);
+  
+        const totalFactura = subTotalFacturas + totalImpuestos;
+        totalFacturaControl.setValue(totalFactura);
+      }
+    }
   }
 
   cargarDatosDeInicio() {
@@ -336,7 +354,6 @@ export class FacturasComponent implements OnInit {
     this.accion = 'Editar'; 
     this.id = factura.Id; 
   
-    // Convertir la fecha al formato yyyy-MM-dd
     const fechaEmision = new Date(factura.FechaEmisionFactura);
     const formattedFechaEmision = fechaEmision.toISOString().split('T')[0];
 
@@ -378,6 +395,7 @@ export class FacturasComponent implements OnInit {
     const selectedProducto = this.listProductos.find(producto => producto.Id === +idProducto);
     if (selectedProducto) {
       this.form?.get('precioUnitarioProducto')?.setValue(selectedProducto.PrecioUnitario);
+      this.updateImpuestosYTotales();
     }
   }    
 }
